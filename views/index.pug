@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}. Enter the name of the artist you want to find.
+  form(action='/search_artist', method='POST')
+    p
+      | name: 
+      input(name='artist', value='', type='text')
+    input(value='Submit', type='submit')
