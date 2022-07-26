@@ -1,5 +1,9 @@
 extends layout
 
 block content
-  p Search results for #{artist} :
-  p #{results}
+  H1 Search results for #{artist} :
+  form(action="/download", method="get")
+    p Download CSV
+    input(name='fileName', value=fileName, type='submit')
+  p Search results as text:
+  | #{results}

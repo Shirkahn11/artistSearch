@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var controller = require('../public/javascripts/http-controller');
-const axios = require('axios');
 const bodyParser = require('body-parser');
 
 const middlewares = [
@@ -13,20 +12,22 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'ArtistSearch' });
 });
 
+/* GET download csv file. */
+router.get('/download', function(req, res) {
+  res.download('./' + req.query.fileName + '.csv');
+})
+
+/* POST search query */
 router.post('/search_artist', function(req, res) {
   const artist = req.body.artist;
-  console.log('Begin artist search for ' + artist);
-    axios
-    .get('http://ws.audioscrobbler.com/2.0?method=artist.search&artist=' + artist + '&api_key=506c8597bfa2e8de009ec1411caa8f38&format=json&limit=100')
-    .then(response => {
-      console.log(`statusCode: ${response.status}`);
-      artistResult = JSON.stringify(response.data.results.artistmatches.artist);
-      res.render('artist', { artist: artist, results: artistResult});
-    })
-    .catch(error => {
-      console.error(error);
-    });
-  console.log('End artistSearch for', req.body.artist);
+  const fileName = req.body.fileName;
+  const limit = req.body.limit;
+  controller.searchArtist(artist, null, 1, fileName, 100).then(artistResult => {
+    res.render('artist', { artist: artist, results: artistResult, fileName: fileName});
+  })
+  .catch(error => {  
+    res.render('error', { error: error});
+  });
 });
 
 module.exports = router;
